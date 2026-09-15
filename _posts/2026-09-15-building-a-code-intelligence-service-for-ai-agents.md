@@ -62,6 +62,20 @@ A full backfill touches 1,300+ repos. A naive worker pool lets one enormous repo
 
 This is not a REST API with an MCP adapter bolted on. The tool surface was designed for how agents actually query: exact symbol lookups, batched lookups, blast radius as a first-class query, and text search for everything else. Fewer, denser tool calls matter more than a rich API, because every round trip is latency and tokens in an agent loop.
 
+## Why build this instead of buying it
+
+Code intelligence is not a new problem, and there are established products for it. So why did we build our own?
+
+**Commercial code intelligence is priced for enterprises, not for agents.** Products like Sourcegraph offer excellent code search and graph features, but they are sold per seat to human users, with enterprise contracts to match. Our consumer is not a human with a budget line; it is an agent making thousands of lookups a day across the whole org. A per-seat model fits that workload badly, either because agent "seats" are not a category most vendors price for, or because the volume of queries an agent loop generates dwarfs what a human team would ever do.
+
+**The expensive parts turned out not to be that expensive.** The core stack here is Postgres, Zoekt (open source, the same text indexer that powers GitHub code search), SCIP, and tree-sitter, all running on a modest Kubernetes footprint. The genuinely hard work was in the design decisions above, and those transfer to anyone willing to own a small Go service. What vendors sell as a platform, we assembled as a pipeline plus two hundred lines of API.
+
+**MCP changes the calculus.** Existing code search products expose REST APIs and web UIs designed for humans. Agents need a different interface: exact symbol resolution, batched lookups, blast radius as a query, and answers dense enough that no follow-up archaeology is needed. Buying a great code search engine and bolting MCP on top of its human-oriented API gets you a worse agent experience than designing the tool surface for agents first.
+
+**Owning the index is the feature.** When the index is yours, new questions are new queries, not feature requests. Extracting service dependencies from Helm values, labeling name-matched call edges, and tuning indexing for our repo shapes all took days because we own the pipeline. On a vendor platform, each of those is a support ticket, an enterprise plan tier, or an impossibility.
+
+None of this means commercial tools are wrong in general. If your need is a human-facing code search UI and you want zero ownership, buy one. But for agent-facing code intelligence at org scale, a self-hosted index with an MCP-native surface is dramatically cheaper and, more importantly, yours to evolve.
+
 ## What we learned
 
 **Trustworthiness beats coverage.** An agent acts on what you tell it. A wrong blast radius is worse than no blast radius, because the agent will confidently plan around it. This is why we label name-matched edges and why precision was prioritized over indexing every language perfectly.
