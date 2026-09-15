@@ -1,3 +1,46 @@
-title: Harshal's Blog
-description: Engineering notes on infrastructure, code intelligence, and AI agents.
-theme: minima
+title: Harshal Agarwal
+description: >
+  Engineering notes on code intelligence, distributed systems, and AI agents.
+url: "https://snitchseekercode.github.io"
+remote_theme: mmistakes/minimal-mistakes@4.26.2
+
+author:
+  name: "Harshal Agarwal"
+  avatar: null
+  bio: "Software engineer building code intelligence and agent infrastructure."
+  links:
+    - label: "GitHub"
+      icon: "fab fa-fw fa-github"
+      url: "https://github.com/SnitchSeekerCode"
+    - label: "LinkedIn"
+      icon: "fab fa-fw fa-linkedin"
+      url: "https://www.linkedin.com/"
+
+minimal_mistakes_skin: "default"
+
+defaults:
+  # _posts
+  - scope:
+      path: ""
+      type: posts
+    values:
+      layout: single
+      author_profile: true
+      read_time: true
+      comments: false
+      share: false
+      related: true
+  # _pages
+  - scope:
+      path: "_pages"
+      type: pages
+    values:
+      layout: single
+      author_profile: true
+
+include: ["_pages"]
+
+permalink: /:year/:month/:day/:title/
+
+markdown: kramdown
+highlighter: rouge
